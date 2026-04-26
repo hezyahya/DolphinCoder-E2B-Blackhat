@@ -12,19 +12,18 @@ services:
       - MODEL_URL=${DOLPHIN_MODEL_URL}
     restart: unless-stopped
 
-  e2b-desktop:
-    image: e2b/desktop
-    ports:
-      - "8000:8000"
-    environment:
-      - E2B_API_KEY=${E2B_API_KEY}
-    restart: unless-stopped
-
   api:
     build: ./api
     ports:
       - "5000:5000"
     depends_on:
       - dolphin-ai
-      - e2b-desktop
+    restart: unless-stopped
+
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
     restart: unless-stopped
