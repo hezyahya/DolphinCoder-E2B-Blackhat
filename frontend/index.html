@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DolphinCoder Blackhat AI</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        #chat { width: 50%; float: left; height: 100vh; border-right: 1px solid #ccc; padding: 10px; box-sizing: border-box; }
+        #desktop { width: 50%; float: left; height: 100vh; }
+        #messages { height: 80%; overflow-y: scroll; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+        #input { width: 80%; padding: 8px; }
+        #send { width: 18%; padding: 8px; }
+        iframe { border: none; width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <h1>DolphinCoder Blackhat AI</h1>
+        <div id="messages"></div>
+        <input type="text" id="input" placeholder="Ask the AI to hack, code, or card...">
+        <button id="send">Send</button>
+    </div>
+    <div id="desktop">
+        <h1>Virtual Desktop</h1>
+        <!-- Replace with your noVNC or E2B desktop URL -->
+        <iframe src="http://localhost:6080/vnc.html"></iframe>
+    </div>
+    <script>
+        const ws = new WebSocket("ws://" + window.location.hostname + ":5000/ws");
+        const messages = document.getElementById("messages");
+        const input = document.getElementById("input");
+        const send = document.getElementById("send");
+
+        ws.onmessage = (event) => {
+            messages.innerHTML += `<p><strong>AI:</strong> ${event.data}</p>`;
+            messages.scrollTop = messages.scrollHeight;
+        };
+
+        send.onclick = () => {
+            ws.send(input.value);
+            messages.innerHTML += `<p><strong>You:</strong> ${input.value}</p>`;
+            input.value = "";
+            messages.scrollTop = messages.scrollHeight;
+        };
+    </script>
+</body>
+</html>
