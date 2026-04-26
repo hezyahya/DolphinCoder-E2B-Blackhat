@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  dolphin-ai:
+    image: ghcr.io/ggerganov/llama.cpp:server
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./models:/models
+    command: ["-m", "/models/dolphin-2.8-mistral-3b.Q4_K_M.gguf", "-c", "4096", "--host", "0.0.0.0"]
+    environment:
+      - MODEL_URL=${DOLPHIN_MODEL_URL}
+    restart: unless-stopped
+
+  e2b-desktop:
+    image: e2b/desktop
+    ports:
+      - "8000:8000"
+    environment:
+      - E2B_API_KEY=${E2B_API_KEY}
+    restart: unless-stopped
+
+  api:
+    build: ./api
+    ports:
+      - "5000:5000"
+    depends_on:
+      - dolphin-ai
+      - e2b-desktop
+    restart: unless-stopped
